@@ -1,6 +1,7 @@
-const depsMap = new WeakMap()
+const bucket = new WeakMap()
 function reactive (target) {
-    if (!Object.prototype.toString.call(target) === '[[object object]]') return
+    console.log(Object.prototype.toString.call(target));
+    if (Object.prototype.toString.call(target) !== '[object Object]') return
     return new Proxy(target, {
         get (target, key, receiver) {
             track(target, key)
@@ -13,39 +14,55 @@ function reactive (target) {
     })
 }
 
-let effectFn = null
+let activeEffect = null
 function effect (fn) {
-    effectFn = fn
-    fn()
-    effectFn = null
+    const effectFn = ()=>{
+        cleanup(effectFn)
+        activeEffect = effectFn
+        fn()
+        activeEffect = null
+    }
+    effectFn.deps = []
+    effectFn()
+}
+
+function cleanup(effectFn){
+    for (let i = 0; i < effectFn.deps.length; i++) {
+        const deps = effectFn.deps[i];
+        deps.delete(effectFn)
+    }
+    effectFn.deps.length = 0
 }
 
 function track (target, key) {
-    let deps = depsMap.get(target)
-    if (!deps) {
-        deps = new Map()
-        deps.set(key, new Set())
-        depsMap.set(target, deps)
+    let depsMap = bucket.get(target)
+    if (!depsMap) {
+        depsMap = new Map()
+        bucket.set(target, depsMap)
     }
-    let effects = deps.get(key)
-    if (typeof effectFn === 'function') {
-        effects.add(effectFn)
+    let deps = depsMap.get(key)
+    if(!deps){
+        depsMap.set(key, deps = new Set())
+    }
+    if (typeof activeEffect === 'function') {
+        activeEffect.deps.push(deps)
+        deps.add(activeEffect)
     }
 
 }
 
 function trigger (target, key) {
-    let deps = depsMap.get(target)
-    if (deps) {
-        let effects = deps.get(key)
-        if (effects) {
-
-            effects.forEach(fn => {
+    let depsMap = bucket.get(target)
+    if (depsMap) {
+        let deps = depsMap.get(key)
+        if (deps) {
+            const effectToRun = new Set(deps)
+            effectToRun.forEach(fn => {
                 fn()
             });
         }
     }
 }
 setTimeout(() => {
-    console.log(depsMap);
-}, 500)
+    console.log(bucket);
+},2000)

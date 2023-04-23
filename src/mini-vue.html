@@ -1,21 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
+
 <body>
     <script src="./reactivity/reactivity.js"></script>
     <script>
+        /* cleanup清理分支
         const obj = reactive({
-            msg: 'hello'
+        msg: 0,
+        showMsg: true
+        })
+        effect(() => {
+        console.log(obj.showMsg ? obj.msg : 'hello')
+        })
+        obj.showMsg = !obj.showMsg
+        setInterval(() => {
+        obj.msg++
+        },1000)
+        */
+        /* 多个副作用函数
+            const obj = reactive({
+            msg: 0
         })
         effect(() => {
             console.log(obj.msg)
         })
-        obj.msg = 'world'
+        effect(() => {
+            console.log(obj.msg)
+        })
+        obj.msg++
+        */
     </script>
 </body>
+
 </html>
