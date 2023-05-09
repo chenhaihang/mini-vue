@@ -19,9 +19,12 @@
             console.log('计算了computed');
             return  data.foo + data.bar
         })
-        console.log(fooPlusBar.value);
-        data.foo++
-        console.log(fooPlusBar.value);
+        effect(()=>{
+            console.log(fooPlusBar.value);
+        })
+        // console.log(fooPlusBar.value);
+        data.foo+=4
+        // console.log(fooPlusBar.value);
         // data.foo++
         // const data = reactive({
         //     foo: 1

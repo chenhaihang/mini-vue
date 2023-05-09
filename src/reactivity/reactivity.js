@@ -20,6 +20,7 @@ function computed(fn){
         lazy:true,
         schedule:()=>{
             dirty = true
+            trigger(obj,'value')
         }
     })
     const obj ={
@@ -28,6 +29,7 @@ function computed(fn){
                 value = effectFn()
                 dirty = false
             }
+            track(obj,'value')
             return value
         }
     }
@@ -36,7 +38,7 @@ function computed(fn){
 
 let activeEffect = null
 const effectStack = []
-function effect (fn,options) {
+function effect (fn,options={}) {
     const effectFn = ()=>{
         cleanup(effectFn)
         activeEffect = effectFn
