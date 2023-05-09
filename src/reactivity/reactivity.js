@@ -1,6 +1,5 @@
 const bucket = new WeakMap()
 function reactive (target) {
-    console.log(Object.prototype.toString.call(target));
     if (Object.prototype.toString.call(target) !== '[object Object]') return
     return new Proxy(target, {
         get (target, key, receiver) {
@@ -15,12 +14,15 @@ function reactive (target) {
 }
 
 let activeEffect = null
+const effectStack = []
 function effect (fn) {
     const effectFn = ()=>{
         cleanup(effectFn)
         activeEffect = effectFn
+        effectStack.push(effectFn)
         fn()
-        activeEffect = null
+        effectStack.pop()
+        activeEffect = effectStack[effectStack.length -1]
     }
     effectFn.deps = []
     effectFn()
