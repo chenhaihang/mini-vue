@@ -12,18 +12,25 @@
     <script src="./reactivity/reactivity.js"></script>
     <script>
         const data = reactive({
-            foo: true,
-            bar: true
+            foo: 1
         })
         effect( function effect1() {
-            console.log('effect1 函数');
-            effect(function effect2(){
-                console.log('effect2 函数');
-                console.log(data.bar,' 读取了bar');
-            })
-            console.log(data.foo,' 读取了foo');
+            data.foo++
+            console.log('data.foo++');
         })
-        data.foo = false
+        // const data = reactive({
+        //     foo: true,
+        //     bar: true
+        // })
+        // effect( function effect1() {
+        //     console.log('effect1 函数');
+        //     effect(function effect2(){
+        //         console.log('effect2 函数');
+        //         console.log(data.bar,' 读取了bar');
+        //     })
+        //     console.log(data.foo,' 读取了foo');
+        // })
+        // data.foo = false
         /* cleanup清理分支
         const obj = reactive({
         msg: 0,

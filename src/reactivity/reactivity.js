@@ -60,6 +60,7 @@ function trigger (target, key) {
         if (deps) {
             const effectToRun = new Set(deps)
             effectToRun.forEach(fn => {
+                if(activeEffect === fn) return 
                 fn()
             });
         }
