@@ -12,17 +12,29 @@
     <script src="./reactivity/reactivity.js"></script>
     <script>
         const data = reactive({
-            foo: 1
+            foo: 1,
+            bar: 2
         })
-        effect( function effect1() {
-            console.log(data.foo,'data.foo++');
-        },{
-            schedule:(fn)=>{
-                setTimeout(fn,0)
-            }
+        const fooPlusBar = computed(()=>{
+            console.log('计算了computed');
+            return  data.foo + data.bar
         })
+        console.log(fooPlusBar.value);
         data.foo++
-        console.log('代码执行结束了');
+        console.log(fooPlusBar.value);
+        // data.foo++
+        // const data = reactive({
+        //     foo: 1
+        // })
+        // effect( function effect1() {
+        //     console.log(data.foo,'data.foo++');
+        // },{
+        //     schedule:(fn)=>{
+        //         setTimeout(fn,0)
+        //     }
+        // })
+        // data.foo++
+        // console.log('代码执行结束了');
         // const data = reactive({
         //     foo: true,
         //     bar: true

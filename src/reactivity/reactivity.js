@@ -13,6 +13,27 @@ function reactive (target) {
     })
 }
 
+function computed(fn){
+    let value 
+    let dirty = true
+    const effectFn = effect(fn,{
+        lazy:true,
+        schedule:()=>{
+            dirty = true
+        }
+    })
+    const obj ={
+        get value(){
+            if(dirty){
+                value = effectFn()
+                dirty = false
+            }
+            return value
+        }
+    }
+    return obj
+}
+
 let activeEffect = null
 const effectStack = []
 function effect (fn,options) {
@@ -20,13 +41,18 @@ function effect (fn,options) {
         cleanup(effectFn)
         activeEffect = effectFn
         effectStack.push(effectFn)
-        fn()
+        const res = fn()
         effectStack.pop()
         activeEffect = effectStack[effectStack.length -1]
+        return res
     }
     effectFn.options = options
     effectFn.deps = []
-    effectFn()
+    if(options.lazy){
+        return effectFn
+    } else {
+        effectFn()
+    }
 }
 
 function cleanup(effectFn){
