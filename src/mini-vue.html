@@ -15,9 +15,14 @@
             foo: 1
         })
         effect( function effect1() {
-            data.foo++
-            console.log('data.foo++');
+            console.log(data.foo,'data.foo++');
+        },{
+            schedule:(fn)=>{
+                setTimeout(fn,0)
+            }
         })
+        data.foo++
+        console.log('代码执行结束了');
         // const data = reactive({
         //     foo: true,
         //     bar: true

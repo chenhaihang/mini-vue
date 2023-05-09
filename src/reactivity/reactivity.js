@@ -15,7 +15,7 @@ function reactive (target) {
 
 let activeEffect = null
 const effectStack = []
-function effect (fn) {
+function effect (fn,options) {
     const effectFn = ()=>{
         cleanup(effectFn)
         activeEffect = effectFn
@@ -24,6 +24,7 @@ function effect (fn) {
         effectStack.pop()
         activeEffect = effectStack[effectStack.length -1]
     }
+    effectFn.options = options
     effectFn.deps = []
     effectFn()
 }
@@ -61,7 +62,11 @@ function trigger (target, key) {
             const effectToRun = new Set(deps)
             effectToRun.forEach(fn => {
                 if(activeEffect === fn) return 
-                fn()
+                if(fn.options.schedule){
+                    fn.options.schedule(fn)
+                } else {
+                    fn()
+                }
             });
         }
     }
